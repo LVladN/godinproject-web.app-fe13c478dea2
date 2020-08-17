@@ -1,0 +1,25 @@
+# This is a sample build configuration for JavaScript.
+# Check our guides at https://confluence.atlassian.com/x/14UWN for more examples.
+# Only use spaces to indent your .yml configuration.
+# -----
+# You can specify a custom docker image from Docker Hub as your build environment.
+image: node:10.16.0
+
+pipelines:
+  branches:
+    master:
+    - step:
+        caches:
+        - node
+        - pip
+        name: S3 Deploy
+        deployment: production
+        script:
+        - apt-get update
+        - apt-get -y install python-dev
+        - apt-get -y install python-pip
+        - pip install awscli
+        - npm install
+        - npm run-script build
+        - cd build
+        - aws s3 sync . s3://godin.anvara.io/ --acl public-read
